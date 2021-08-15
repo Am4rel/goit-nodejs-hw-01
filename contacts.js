@@ -2,11 +2,9 @@ const fs = require("fs").promises;
 const path = require("path");
 const getId = require("./utils/getId");
 
-// const {v4} = require("uuid");
-
 const contactsPath = path.join(__dirname, "/db/contacts.json");
 
-const listContacts = async () => {
+const getListOfContacts = async () => {
     const contacts = await fs.readFile(contactsPath)
     return JSON.parse(contacts);
 };
@@ -19,7 +17,7 @@ const updateContacts = async (updateInfo) => {
 
 const getById = async (id) => {
     try {
-        const contacts = await listContacts();
+        const contacts = await getListOfContacts();
         const neededContact = contacts.find(contact => contact.id === parseInt(id));
         if (!neededContact){
             throw new Error(`Contact with id ${id} not found.`);
@@ -32,7 +30,7 @@ const getById = async (id) => {
 
 const removeContact = async (id) => {
     try {
-        const contacts = await listContacts();
+        const contacts = await getListOfContacts();
         const newContacts = contacts.filter(contact => contact.id !== parseInt(id));
         await updateContacts(newContacts);
         
@@ -45,8 +43,7 @@ const removeContact = async (id) => {
 
 const addContact = async (name, email, phone) => {
     try {
-        // const id = v4();
-        const contacts = await listContacts();
+        const contacts = await getListOfContacts();
         
         const id = getId(contacts);
         const newContact = {id, name, email, phone};
@@ -62,7 +59,7 @@ const addContact = async (name, email, phone) => {
 };
 
 module.exports ={
-    listContacts,
+    getListOfContacts,
     getById,
     removeContact,
     addContact
